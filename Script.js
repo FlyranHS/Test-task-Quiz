@@ -55,5 +55,32 @@ function selectAnswer(selectedIndex, button) {
     } else {
         button.classList.add('incorrect');
     }
-    ///nextButton.disabled = true;
+    nextButton.disabled = false;
 }
+nextButton.addEventListener('click', () => {
+    currentQuestionIndex++;
+    if (currentQuestionIndex < questions.length) {
+        showQuestion(currentQuestionIndex);
+    } else {
+        showScore();
+    }
+});
+
+restartButton.addEventListener('click', () => {
+    currentQuestionIndex = 0;
+    score = 0;
+    scoreContainer.textContent = '';
+    restartButton.classList.add('hidden');
+    nextButton.classList.remove('hidden');
+    showQuestion(currentQuestionIndex);
+});
+
+function showScore() {
+    questionNumberElement.textContent = '';
+    questionTextElement.textContent = `You scored ${score} out of ${questions.length}!`;
+    answersContainer.innerHTML = '';
+    nextButton.classList.add('hidden');
+    restartButton.classList.remove('hidden');
+}
+
+showQuestion(currentQuestionIndex);
