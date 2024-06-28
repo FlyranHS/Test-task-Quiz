@@ -49,6 +49,8 @@ function showQuestion(index) {
 
 function selectAnswer(selectedIndex, button) {
     const correctIndex = questions[currentQuestionIndex].correct;
+    const buttons = document.querySelectorAll('.answer');
+    buttons.forEach(btn => btn.disabled = true);
     if (selectedIndex === correctIndex) {
         button.classList.add('correct');
         score++;
