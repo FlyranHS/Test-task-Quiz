@@ -1,20 +1,28 @@
 let currentQuestionIndex = 0;
 let score = 0;
-let timer;
-let timeLeft = 30;
+let timerInterval;
 
 const questions = [
     {
-        text: 'What is the capital of France?',
-        answers: ['New York', 'London', 'Paris', 'Dublin'],
-        correct: 2
+        text: "What is the capital of France?",
+        answers: ["New York", "London", "Paris", "Dublin"],
+        correct: [2]
     },
     {
-        text: 'What is 2 + 2?',
-        answers: ['3', '4', '5', '6'],
-        correct: 1
+        text: "What is 2 + 2?",
+        answers: ["3", "4", "5", "6"],
+        correct: [1]
     },
-    // Добавьте свои вопросы здесь
+    {
+        text: "Which planet is known as the Red Planet?",
+        answers: ["Earth", "Mars", "Jupiter", "Venus"],
+        correct: [1]
+    },
+    {
+        text: "Select the prime numbers.",
+        answers: ["2", "3", "4", "5"],
+        correct: [0, 1, 3]
+    }
 ];
 
 const questionNumberElement = document.getElementById('question-number');
@@ -24,11 +32,7 @@ const nextButton = document.getElementById('next-button');
 const scoreContainer = document.getElementById('score-container');
 const restartButton = document.getElementById('restart-button');
 const timerElement = document.getElementById('timer');
-const themeToggle = document.getElementById('theme-toggle');
-
-themeToggle.addEventListener('change', () => {
-    document.body.classList.toggle('dark-mode');
-});
+const ThemeButton = document.getElementById('theme');
 
 function showQuestion(index) {
     const question = questions[index];
@@ -43,23 +47,27 @@ function showQuestion(index) {
         answersContainer.appendChild(button);
     });
     nextButton.disabled = true;
-    resetTimer();
     startTimer();
 }
 
 function selectAnswer(selectedIndex, button) {
-    const correctIndex = questions[currentQuestionIndex].correct;
+    const correctIndexes = questions[currentQuestionIndex].correct;
     const buttons = document.querySelectorAll('.answer');
     buttons.forEach(btn => btn.disabled = true);
-    if (selectedIndex === correctIndex) {
+    clearInterval(timerInterval);
+
+    if (correctIndexes.includes(selectedIndex)) {
         button.classList.add('correct');
         score++;
     } else {
         button.classList.add('incorrect');
-        buttons[correctIndex].classList.add('correct');
     }
+
+    correctIndexes.forEach(index => {
+        buttons[index].classList.add('correct');
+    });
+
     nextButton.disabled = false;
-    clearInterval(timer);
 }
 
 nextButton.addEventListener('click', () => {
@@ -86,33 +94,32 @@ function showScore() {
     answersContainer.innerHTML = '';
     nextButton.classList.add('hidden');
     restartButton.classList.remove('hidden');
-    clearInterval(timer);
+    clearInterval(timerInterval);
 }
 
 function startTimer() {
-    timeLeft = 30;
-    timerElement.textContent = `Time left: ${timeLeft}`;
-    timer = setInterval(() => {
+    let timeLeft = 30;
+    timerElement.textContent = timeLeft;
+    timerInterval = setInterval(() => {
         timeLeft--;
-        timerElement.textContent = `Time left: ${timeLeft}`;
+        timerElement.textContent = timeLeft;
         if (timeLeft <= 0) {
-            clearInterval(timer);
-            showCorrectAnswer();
+            clearInterval(timerInterval);
+            const correctIndexes = questions[currentQuestionIndex].correct;
+            const buttons = document.querySelectorAll('.answer');
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (correctIndexes.includes(i)) {
+                    btn.classList.add('correct');
+                }
+            });
             nextButton.disabled = false;
         }
     }, 1000);
 }
 
-function resetTimer() {
-    clearInterval(timer);
-    timerElement.textContent = 'Time left: 30';
-}
-
-function showCorrectAnswer() {
-    const correctIndex = questions[currentQuestionIndex].correct;
-    const buttons = document.querySelectorAll('.answer');
-    buttons.forEach(btn => btn.disabled = true);
-    buttons[correctIndex].classList.add('correct');
-}
+ThemeButton.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+});
 
 showQuestion(currentQuestionIndex);

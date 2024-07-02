@@ -7,12 +7,10 @@
     <link rel="stylesheet" href="Style.css">
 </head>
 <body>
+        
     <div class="quiz-container">
         <div class="question-container">
-            <label>
-            <input type="checkbox" id="theme">
-            Dark Mode
-            </label>
+            <button id="theme">Theme</button>
             <h2 id="question-number">Question 1/4</h2>
             <p id="question-text">What is the capital of France?</p>
             <div class="answers-container">
@@ -21,12 +19,12 @@
                 <button class="answer">Paris</button>
                 <button class="answer">Dublin</button>
             </div>
-            <div id="timer">Time left: 30</div>
         </div>
+        <div id="timer">30</div>
         <button id="next-button" disabled>Next</button>
         <p id="score-container"></p>
         <button id="restart-button" class="hidden">Restart</button>
     </div>
-    <script src="script.js"></script>
+    <script src="Script.js"></script>
 </body>
 </html>
