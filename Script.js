@@ -9,6 +9,26 @@ const questions = [
         correct: [2]
     },
     {
+        text: "Which of the following are German car manufacturers?",
+        answers: ["BMW", "Toyota", "Ford", "Mercedes-Benz"],
+        correct: [0, 3]
+    },
+    {
+        text: "What is the most common type of fuel used in cars?",
+        answers: ["Diesel", "Electric", "Petrol", "Hydrogen"],
+        correct: [2]
+    },
+    {
+        text: "Which of these features are typically found in modern cars?",
+        answers: ["Airbags", "Navigation System", "Manual Window Rollers", "Bluetooth Connectivity"],
+        correct: [0, 1, 3]
+    },
+    {
+        text: " What kind of cars are the best? ",
+        answers: ["Electro", "French", "Huge petrolhead's monsters", "Probably, i'm ga..."],
+        correct: [2]
+    },
+    {
         text: "What is 2 + 2?",
         answers: ["3", "4", "5", "6"],
         correct: [1]
