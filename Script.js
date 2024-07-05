@@ -1,5 +1,6 @@
 let currentQuestionIndex = 0;
 let score = 0;
+let selectedAnswers = [];
 let timerInterval;
 
 const questions = [
@@ -24,8 +25,8 @@ const questions = [
         correct: [0, 1, 3]
     },
     {
-        text: " What kind of cars are the best? ",
-        answers: ["Electro", "French", "Huge petrolhead's monsters", "Probably, i'm ga..."],
+        text: "What kind of cars are the best?",
+        answers: ["Electro", "French", "Huge petrolhead's monsters", "Probably, I'm ga..."],
         correct: [2]
     },
     {
@@ -52,13 +53,14 @@ const nextButton = document.getElementById('next-button');
 const scoreContainer = document.getElementById('score-container');
 const restartButton = document.getElementById('restart-button');
 const timerElement = document.getElementById('timer');
-const ThemeButton = document.getElementById('theme');
+const themeButton = document.getElementById('theme');
 
 function showQuestion(index) {
     const question = questions[index];
     questionNumberElement.textContent = `Question ${index + 1}/${questions.length}`;
     questionTextElement.textContent = question.text;
     answersContainer.innerHTML = '';
+    selectedAnswers = [];
     question.answers.forEach((answer, i) => {
         const button = document.createElement('button');
         button.classList.add('answer');
@@ -72,31 +74,55 @@ function showQuestion(index) {
 
 function selectAnswer(selectedIndex, button) {
     const correctIndexes = questions[currentQuestionIndex].correct;
-    const buttons = document.querySelectorAll('.answer');
-    buttons.forEach(btn => btn.disabled = true);
-    clearInterval(timerInterval);
 
-    if (correctIndexes.includes(selectedIndex)) {
-        button.classList.add('correct');
-        score++;
+    if (button.classList.contains('selected')) {
+        button.classList.remove('selected');
+        selectedAnswers = selectedAnswers.filter(index => index !== selectedIndex);
     } else {
-        button.classList.add('incorrect');
+        if (selectedAnswers.length < correctIndexes.length) {
+            button.classList.add('selected');
+            selectedAnswers.push(selectedIndex);
+        }
     }
 
-    correctIndexes.forEach(index => {
-        buttons[index].classList.add('correct');
-    });
-
-    nextButton.disabled = false;
+    nextButton.disabled = selectedAnswers.length !== correctIndexes.length;
 }
 
 nextButton.addEventListener('click', () => {
-    currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        showQuestion(currentQuestionIndex);
-    } else {
-        showScore();
+    clearInterval(timerInterval); 
+    const correctIndexes = questions[currentQuestionIndex].correct;
+    const buttons = document.querySelectorAll('.answer');
+
+    let allCorrect = true;
+    selectedAnswers.forEach(index => {
+        if (!correctIndexes.includes(index)) {
+            allCorrect = false;
+            buttons[index].classList.add('incorrect');
+        } else {
+            buttons[index].classList.add('correct');
+        }
+    });
+
+    correctIndexes.forEach(index => {
+        if (!selectedAnswers.includes(index)) {
+            buttons[index].classList.add('correct');
+        }
+    });
+
+    if (allCorrect) {
+        score++;
     }
+
+    nextButton.disabled = true;
+
+    setTimeout(() => {
+        currentQuestionIndex++;
+        if (currentQuestionIndex < questions.length) {
+            showQuestion(currentQuestionIndex);
+        } else {
+            showScore();
+        }
+    }, 1000);
 });
 
 restartButton.addEventListener('click', () => {
@@ -138,8 +164,20 @@ function startTimer() {
     }, 1000);
 }
 
-ThemeButton.addEventListener('click', () => {
+themeButton.addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
 });
 
+function loadThemeFromLocalStorage() {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.remove('dark-mode');
+    }
+}
+
+loadThemeFromLocalStorage();
 showQuestion(currentQuestionIndex);
